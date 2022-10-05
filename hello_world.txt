@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-<<<<<<< hello_world.txt
+Reid's edit
 update by sowmya
 Jackson
 some edit
 This is Zach's edit
->>>>>>> hello_world.txt
->>>>>>> sowmya-helloworld
