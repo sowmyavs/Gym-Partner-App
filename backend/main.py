@@ -1,12 +1,20 @@
-from typing import Optional
+# Imports
 from fastapi import FastAPI
+import uvicorn
+from config import settings
+from api.routers import get_api_router
 
+# Create the FastAPP app
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# Include our API router
+app.include_router(get_api_router(app), tags=["tasks"])
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+# Define our main function so we can easily run the server
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host=settings.HOST,
+        reload=settings.DEBUG_MODE,
+        port=settings.PORT,
+    )
