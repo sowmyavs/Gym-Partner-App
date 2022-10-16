@@ -1,8 +1,8 @@
-Pull latest repository!
+## Pull latest repository!
 
 Tutorial we used (sequence of 3 tutorials): <https://medium.com/geekculture/building-a-farm-application-part-1-installation-and-configuration-ad730756e1fa>
 
-MongoDB
+## MongoDB
 
 1.  Create account here: <https://www.mongodb.com/atlas> (I invited you to the db project)
 
@@ -14,7 +14,7 @@ MongoDB
 
 5.  Choose the option "connect using MongoDB Compass" and follow the steps. (MongoDB compass is a GUI for using MongoDB)
 
-Install:
+## Installations:
 
 1.  Python (3.9 or later)
 
@@ -22,7 +22,7 @@ Install:
 
 3.  NodeJS: <https://nodejs.org/en/download/>
 
-FastAPI
+## FastAPI
 
 1.  Cd into backend folder
 
@@ -34,7 +34,7 @@ FastAPI
 
 5.  It will give you a url, open it and append /docs to it to access api
 
-FrontEnd (React)
+## FrontEnd (React)
 
 1.  Cd into frontend folder
 
@@ -44,7 +44,7 @@ FrontEnd (React)
 
 4.  npm start - starts the front end interface
 
-MongoDB python dependencies
+## MongoDB python dependencies
 
 1.  Cd into backend folder
 
@@ -52,7 +52,7 @@ MongoDB python dependencies
 
 3.  'pip install pymongo[srv]'
 
-To run app:
+# To run app:
 
 1.  From backend: python -m uvicorn main:app --reload
 
