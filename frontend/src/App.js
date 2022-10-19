@@ -5,17 +5,17 @@ import { Col, Row, Timeline } from "antd";
 import { useEffect, useState } from "react";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [timeline, setTimeline] = useState([]);
 
   useEffect(() => {
-    const fetchAllTasks = async () => {
-      const response = await fetch("/tasks");
-      const fetchedTasks = await response.json();
-      setTasks(fetchedTasks);
+    const fetchAllUsers = async () => {
+      const response = await fetch("/users");
+      const fetchedUsers = await response.json();
+      setUsers(fetchedUsers);
     };
 
-    const interval = setInterval(fetchAllTasks, 1000);
+    const interval = setInterval(fetchAllUsers, 1000);
 
     return () => {
       clearInterval(interval);
@@ -23,52 +23,47 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const timelineItems = tasks.reverse().map((task) => {
-      return task.is_finished ? (
+    const timelineItems = users.reverse().map((user) => {
+      return user.is_finished ? (
         <Timeline.Item
-          onClick={() => completeTask(task._id)}
-          key={task._id}
+          key={user._id}
           dot={<CheckCircleOutlined />}
           color="green"
           style={{ textDecoration: "line-through", color: "green" }}
         >
-          {task.name} <small>({task._id})</small>
+          {user.name} <small>({user._id})</small>
         </Timeline.Item>
       ) : (
         <Timeline.Item
-          onClick={() => completeTask(task._id)}
-          key={task._id}
+          key={user._id}
           dot={<MinusCircleOutlined />}
           color="blue"
           style={{ textDecoration: "initial" }}
         >
-          {task.name} <small>({task._id})</small>
+          {user.name} <small>({user._id})</small>
         </Timeline.Item>
       );
     });
 
     setTimeline(timelineItems);
-  }, [tasks]);
+  }, [users]);
 
-  async function completeTask(id) {
-    let response = await fetch("/task/" + id);
-    let task = await response.json();
-    task.is_finished = !task.is_finished;
-    const updatedTask = JSON.stringify({
-      name: task.name,
-      description: task.description,
-      is_finished: task.is_finished,
+  async function completeUser(id) {
+    let response = await fetch("/user/" + id);
+    let user = await response.json();
+    const updatedUser = JSON.stringify({
+      name: user.name,
     });
 
-    await fetch("/task/" + id, {
+    await fetch("/user/" + id, {
       method: "PUT",
-      body: updatedTask,
+      body: updatedUser,
       headers: { "content-type": "application/json" },
     });
 
-    response = await fetch("/tasks");
-    const fetchedTasks = await response.json();
-    setTasks(fetchedTasks);
+    response = await fetch("/users");
+    const fetchedUsers = await response.json();
+    setUsers(fetchedUsers);
   }
 
   return (

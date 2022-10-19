@@ -28,64 +28,64 @@ def get_api_router(app):
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
 
     # This path will return a list of tasks
-    @router.get("/tasks", response_description="List Users")
+    @router.get("/users", response_description="List Users")
     async def list_users(request: Request):
-        tasks = []
+        users = []
         for doc in await request.app.mongodb["users"].find().to_list(length=100):
-            tasks.append(doc)
-        return JSONResponse(status_code=status.HTTP_200_OK, content=tasks)
+            users.append(doc)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=users)
 
     # This path allows to create a new task
-    @router.post("/task", response_description="Add User")
-    async def add_user(request: Request, task: TaskModel = Body(...)):
-        task = jsonable_encoder(task)
-        new_task = await request.app.mongodb["users"].insert_one(task)
-        created_task = await request.app.mongodb["users"].find_one(
-            {"_id": new_task.inserted_id}
+    @router.post("/user", response_description="Add User")
+    async def add_user(request: Request, user: TaskModel = Body(...)):
+        user = jsonable_encoder(user)
+        new_user = await request.app.mongodb["users"].insert_one(user)
+        created_user = await request.app.mongodb["users"].find_one(
+            {"_id": new_user.inserted_id}
         )
         # Return a success created response
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_task)
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_user)
 
     # This path allows to get a task
-    @router.get("/task/{id}", response_description="Get User")
+    @router.get("/user/{id}", response_description="Get User")
     async def get_user(id: str, request: Request):
-        if (task := await request.app.mongodb["users"].find_one({"_id": id})) is not None:
-            return JSONResponse(status_code=status.HTTP_201_CREATED, content=task)
+        if (user := await request.app.mongodb["users"].find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED, content=user)
         # Return an error if no task if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # This path allows to update a task
-    @router.put("/task/{id}", response_description="Update User")
-    async def update_user(id: str, request: Request, task: TaskUpdateModel = Body(...)):
-        task = {k: v for k, v in task.dict().items() if v is not None}
+    @router.put("/user/{id}", response_description="Update User")
+    async def update_user(id: str, request: Request, user: TaskUpdateModel = Body(...)):
+        user = {k: v for k, v in user.dict().items() if v is not None}
 
-        if len(task) >= 1:
+        if len(user) >= 1:
             update_result = await request.app.mongodb["users"].update_one(
-                {"_id": id}, {"$set": task}
+                {"_id": id}, {"$set": user}
             )
 
             if update_result.modified_count == 1:
                 if (
-                        updated_task := await request.app.mongodb["users"].find_one({"_id": id})
+                        updated_user := await request.app.mongodb["users"].find_one({"_id": id})
                 ) is not None:
-                    return JSONResponse(status_code=status.HTTP_201_CREATED, content=updated_task)
+                    return JSONResponse(status_code=status.HTTP_201_CREATED, content=updated_user)
 
         if (
-                existing_task := await request.app.mongodb["users"].find_one({"_id": id})
+                existing_user := await request.app.mongodb["users"].find_one({"_id": id})
         ) is not None:
-            return JSONResponse(status_code=status.HTTP_201_CREATED, content=existing_task)
+            return JSONResponse(status_code=status.HTTP_201_CREATED, content=existing_user)
 
-        # Return an error if no task if found
+        # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # This path allows to delete a task
-    @router.delete("/task/{id}", response_description="Delete User")
-    async def delete_task(id: str, request: Request):
+    @router.delete("/user/{id}", response_description="Delete User")
+    async def delete_user(id: str, request: Request):
         delete_result = await request.app.mongodb["users"].delete_one({"_id": id})
         
         if delete_result.deleted_count == 1:
             return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
-        # Return an error if no task if found
+        # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # We return our router

@@ -7,8 +7,15 @@ from pydantic import BaseModel, Field
 class TaskModel(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     name: str = Field(...)
-    description: str = Field(...)
-    is_finished: bool = Field(...)
+    email: str = Field(...)
+    password: str = Field(...)
+    bio: str = Field(...)
+    images: list = Field(...) # ****THIS WILL HAVE TO BE CHANGED ****
+    preset_attributes: str = Field(...)
+    favorite_gym: list = Field(...)
+    liked_users: list = Field(...)
+    matched_users: list = Field(...)
+    blocked_users: list = Field(...)
 
     # The config class allows to document our model's schema
     class Config:
@@ -16,9 +23,16 @@ class TaskModel(BaseModel):
         schema_extra = {
             "example": {
                 "id": "00010203-0405-0607-0809-0a0b0c0d0e0f",
-                "name": "My task name",
-                "description": "My description",
-                "is_finished": False
+                "name": "John Doe",
+                "email": "email@gmail.com",
+                "password": "password",
+                "bio": "140 char max",
+                "images": [],
+                "preset_attributes": "ex: Types of exercise, experience level, etc",
+                "favorite_gym": ["gym_name", "gym_address"],
+                "liked_users": [],
+                "matched_users": [],
+                "blocked_users": []
             }
         }
 
@@ -26,15 +40,29 @@ class TaskModel(BaseModel):
 # Define Task Update Model
 class TaskUpdateModel(BaseModel):
     name: str = Field(...)
-    description: str = Field(...)
-    is_finished: bool = Field(...)
+    email: str = Field(...)
+    password: str = Field(...)
+    bio: str = Field(...)
+    images: list = Field(...) # ****THIS WILL HAVE TO BE CHANGED ****
+    preset_attributes: str = Field(...)
+    favorite_gym: list = Field(...)
+    liked_users: list = Field(...)
+    matched_users: list = Field(...)
+    blocked_users: list = Field(...)
 
     # The config class allows to document our model's schema
     class Config:
         schema_extra = {
             "example": {
-                "name": "My task name",
-                "description": "My description",
-                "is_finished": False
+                "name": "John Doe",
+                "email": "email@gmail.com",
+                "password": "password",
+                "bio": "140 char max",
+                "images": [],
+                "preset_attributes": "ex: Types of exercise, experience level, etc",
+                "favorite_gym": ["gym_name", "gym_address"],
+                "liked_users": [],
+                "matched_users": [],
+                "blocked_users": []
             }
         }
