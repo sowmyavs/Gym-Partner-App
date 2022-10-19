@@ -17,7 +17,7 @@ class ServerSettings(BaseSettings):
 # Define the DatabaseSettings class (inherits from BaseSettings)
 class DatabaseSettings(BaseSettings):
     DB_URL: str = "mongodb+srv://jglisczinski:password4mongo@letsgetphysical.25aybep.mongodb.net/?retryWrites=true&w=majority"
-    DB_NAME: str = "tasksDatabase"
+    DB_NAME: str = "Users"
 
 
 # Main Settings class that includes all the settings classes
