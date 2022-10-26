@@ -17,6 +17,8 @@ import _uniqueId from 'lodash/uniqueId'
 
 
 export default function CreateAccountPage({signInSuccess, openLoginPage}) {
+  const [id] = useState(_uniqueId('prefix-'));
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -27,6 +29,7 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
     let gender = data.get('gender-select')
     let birthday = data.get('birthday')
     console.log({
+      id: id,
       email: email,
       password: password,
       firstName: firstName,
@@ -43,10 +46,10 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
       await fetch("/user", {
           method: "POST",
           body: JSON.stringify({
-            "id": "10010203-0405-0607-0809-0a0b0c0d0e0f",
-            "name": "John Doe",
-            "email": "email@gmail.com",
-            "password": "password",
+            "id": id,
+            "name": firstName + " " + lastName,
+            "email": email,
+            "password": password,
             "bio": "140 char max",
             "images": [],
             "preset_attributes": "ex: Types of exercise, experience level, etc",
@@ -60,10 +63,10 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
           }),
           headers: { "content-type": "application/json" }
         })
-      //let response = await fetch("/user/" + id)
-      //let user = await response.json();
-      //console.log(user)
-      //signInSuccess(user)
+      let response = await fetch("/user/" + id)
+      let user = await response.json();
+      console.log(user)
+      signInSuccess(user)
     }
     if(allFilled) {
       createAccount()
