@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 # Models import
-from api.models import TaskModel, TaskUpdateModel
+from api.models import UserModel, UserUpdateModel
 
 # Config import
 from config import settings
@@ -37,7 +37,7 @@ def get_api_router(app):
 
     # This path allows to create a new task
     @router.post("/user", response_description="Add User")
-    async def add_user(request: Request, user: TaskModel = Body(...)):
+    async def add_user(request: Request, user: UserModel = Body(...)):
         user = jsonable_encoder(user)
         new_user = await request.app.mongodb["users"].insert_one(user)
         created_user = await request.app.mongodb["users"].find_one(
@@ -56,7 +56,7 @@ def get_api_router(app):
 
     # This path allows to update a task
     @router.put("/user/{id}", response_description="Update User")
-    async def update_user(id: str, request: Request, user: TaskUpdateModel = Body(...)):
+    async def update_user(id: str, request: Request, user: UserUpdateModel = Body(...)):
         user = {k: v for k, v in user.dict().items() if v is not None}
 
         if len(user) >= 1:

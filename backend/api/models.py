@@ -3,8 +3,8 @@ import uuid
 from pydantic import BaseModel, Field
 
 
-# Define Task Model
-class TaskModel(BaseModel):
+# Define User Model
+class UserModel(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     name: str = Field(...)
     email: str = Field(...)
@@ -37,8 +37,8 @@ class TaskModel(BaseModel):
         }
 
 
-# Define Task Update Model
-class TaskUpdateModel(BaseModel):
+# Define User Update Model
+class UserUpdateModel(BaseModel):
     name: str = Field(...)
     email: str = Field(...)
     password: str = Field(...)

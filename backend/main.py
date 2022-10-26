@@ -23,7 +23,7 @@ async def shutdown_db_client():
 
 
 # Include our API router
-app.include_router(get_api_router(app), tags=["tasks"])
+app.include_router(get_api_router(app), tags=["users"])
 
 # Define our main function so we can easily run the server
 if __name__ == "__main__":
