@@ -42,8 +42,8 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
     async function createAccount() {
       await fetch("/user", {
           method: "POST",
-          body: {
-            "_id": "00010203-0405-0607-0809-0a0b0c0d0e0f",
+          body: JSON.stringify({
+            "id": "10010203-0405-0607-0809-0a0b0c0d0e0f",
             "name": "John Doe",
             "email": "email@gmail.com",
             "password": "password",
@@ -57,7 +57,7 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
             "liked_users": [],
             "matched_users": [],
             "blocked_users": []
-          },
+          }),
           headers: { "content-type": "application/json" }
         })
       //let response = await fetch("/user/" + id)
