@@ -2,6 +2,7 @@ import "antd/dist/antd.css";
 
 import { useState } from "react";
 import LoginPage from "./LoginPage"
+import CreateAccountPage from "./CreateAccountPage"
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -17,6 +18,10 @@ function App() {
     setCurrPage("createAccountPage")
   }
 
+  const openLoginPage = () => {
+    setCurrPage("login")
+  }
+
   switch (currPage) {
     case "home":
         return(
@@ -24,7 +29,7 @@ function App() {
         )
     case "createAccountPage":
         return(
-            <h1>TODO make create account page</h1>
+            <CreateAccountPage signInSuccess={signInSuccess} openLoginPage={openLoginPage}/>
         )
     default:
         return (
