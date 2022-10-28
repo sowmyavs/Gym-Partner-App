@@ -3,6 +3,7 @@ import "antd/dist/antd.css";
 import { useState } from "react";
 import LoginPage from "./LoginPage"
 import CreateAccountPage from "./CreateAccountPage"
+import MainPage from "./MainPage"
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -25,7 +26,7 @@ function App() {
   switch (currPage) {
     case "home":
         return(
-            <h1>TODO make home page</h1>
+            <MainPage/>
         )
     case "createAccountPage":
         return(
