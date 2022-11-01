@@ -1,5 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
+import Button from "@mui/material/Button";
+
 
 export default function ProfileTab() {
-    return(<p>Profile Tab</p>);
+  return <Button variant="contained">Edit Profile</Button>;
 }

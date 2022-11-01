@@ -133,6 +133,7 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
                 id="password"
                 label="password"
                 name="password"
+                type="password"
                 autoComplete="current-password"
                 autoFocus
               />
