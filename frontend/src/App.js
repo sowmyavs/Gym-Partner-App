@@ -4,44 +4,22 @@ import { useState } from "react";
 import LoginPage from "./LoginPage";
 import CreateAccountPage from "./CreateAccountPage";
 import MainPage from "./MainPage";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Survey from "./Survey";
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [currPage, setCurrPage] = useState([]);
   const [currUser, setCurrUser] = useState([]);
 
-  const signInSuccess = (user, isNew) => {
-    setCurrUser(user);
-    setCurrPage("home");
-  };
-
-  const openCreateAccountPage = () => {
-    setCurrPage("createAccountPage");
-  };
-
-  const openLoginPage = () => {
-    setCurrPage("login");
-  };
-
-  switch (currPage) {
-    case "home":
-      return <MainPage />;
-    case "createAccountPage":
-      return (
-        <CreateAccountPage
-          signInSuccess={signInSuccess}
-          openLoginPage={openLoginPage}
-        />
-      );
-    default:
-      return (
-        <LoginPage
-          signInSuccess={signInSuccess}
-          openCreateAccountPage={openCreateAccountPage}
-        />
-      );
-  }
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/createAccount" element={<CreateAccountPage />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/survey" element={<Survey />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
