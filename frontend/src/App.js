@@ -1,41 +1,46 @@
 import "antd/dist/antd.css";
 
 import { useState } from "react";
-import LoginPage from "./LoginPage"
-import CreateAccountPage from "./CreateAccountPage"
-import MainPage from "./MainPage"
+import LoginPage from "./LoginPage";
+import CreateAccountPage from "./CreateAccountPage";
+import MainPage from "./MainPage";
+import Survey from "./Survey";
 
 function App() {
   const [users, setUsers] = useState([]);
   const [currPage, setCurrPage] = useState([]);
   const [currUser, setCurrUser] = useState([]);
 
-  const signInSuccess = (user) => {
-    setCurrUser(user)
-    setCurrPage("home")
-  }
+  const signInSuccess = (user, isNew) => {
+    setCurrUser(user);
+    setCurrPage("home");
+  };
 
   const openCreateAccountPage = () => {
-    setCurrPage("createAccountPage")
-  }
+    setCurrPage("createAccountPage");
+  };
 
   const openLoginPage = () => {
-    setCurrPage("login")
-  }
+    setCurrPage("login");
+  };
 
   switch (currPage) {
     case "home":
-        return(
-            <MainPage/>
-        )
+      return <MainPage />;
     case "createAccountPage":
-        return(
-            <CreateAccountPage signInSuccess={signInSuccess} openLoginPage={openLoginPage}/>
-        )
+      return (
+        <CreateAccountPage
+          signInSuccess={signInSuccess}
+          openLoginPage={openLoginPage}
+        />
+      );
     default:
-        return (
-            <LoginPage signInSuccess={signInSuccess} openCreateAccountPage={openCreateAccountPage}/>
-            )
+      return (
+        <LoginPage
+          signInSuccess={signInSuccess}
+          openCreateAccountPage={openCreateAccountPage}
+        />
+      );
   }
 }
 
