@@ -1,33 +1,34 @@
-import * as React from 'react';
-import { useState } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Grid from '@mui/material/Grid';
-import _uniqueId from 'lodash/uniqueId'
+import * as React from "react";
+import { useState } from "react";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Grid from "@mui/material/Grid";
+import _uniqueId from "lodash/uniqueId";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
-
-export default function CreateAccountPage({signInSuccess, openLoginPage}) {
-  const [id] = useState(_uniqueId('prefix-'));
+export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
+  const navigate = useNavigate();
+  const [id] = useState(_uniqueId("prefix-"));
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    let email = data.get('email')
-    let password = data.get('password')
-    let firstName = data.get('first-name')
-    let lastName = data.get('last-name')
-    let gender = data.get('gender-select')
-    let birthday = data.get('birthday')
+    let email = data.get("email");
+    let password = data.get("password");
+    let firstName = data.get("first-name");
+    let lastName = data.get("last-name");
+    let gender = data.get("gender-select");
+    let birthday = data.get("birthday");
     console.log({
       id: id,
       email: email,
@@ -35,43 +36,48 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
       firstName: firstName,
       lastName: lastName,
       gender: gender,
-      birthday: birthday
+      birthday: birthday,
     });
-    let allFilled = true
-    if(email === "" || password === "" || firstName === ""|| lastName === "" || gender === null) {
-      allFilled = false
+    let allFilled = true;
+    if (
+      email === "" ||
+      password === "" ||
+      firstName === "" ||
+      lastName === "" ||
+      gender === null
+    ) {
+      allFilled = false;
     }
 
     async function createAccount() {
       await fetch("/user", {
-          method: "POST",
-          body: JSON.stringify({
-            "id": id,
-            "name": firstName + " " + lastName,
-            "email": email,
-            "password": password,
-            "bio": "140 char max",
-            "images": [],
-            "preset_attributes": "ex: Types of exercise, experience level, etc",
-            "favorite_gym": [
-              "gym_name",
-              "gym_address"
-            ],
-            "liked_users": [],
-            "matched_users": [],
-            "blocked_users": []
-          }),
-          headers: { "content-type": "application/json" }
-        })
-      let response = await fetch("/user/" + id)
+        method: "POST",
+        body: JSON.stringify({
+          id: id,
+          name: firstName + " " + lastName,
+          email: email,
+          password: password,
+          bio: "140 char max",
+          images: [],
+          preset_attributes: "ex: Types of exercise, experience level, etc",
+          favorite_gym: ["gym_name", "gym_address"],
+          liked_users: [],
+          matched_users: [],
+          blocked_users: [],
+        }),
+        headers: { "content-type": "application/json" },
+      });
+      let response = await fetch("/user/" + id);
       let user = await response.json();
-      console.log(user)
-      signInSuccess(user)
+      console.log(user);
+      localStorage.setItem("id", user._id);
+      navigate("/survey");
     }
-    if(allFilled) {
-      createAccount()
+
+    if (allFilled) {
+      createAccount();
     }
-  }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -79,13 +85,13 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Typography component="h1" variant="h5">
-            Welcome
+          Welcome
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <Grid container spacing={2}>
@@ -151,18 +157,34 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
                 }}
               />
             </Grid>
-            <Grid item xs={12} style={{ display: "flex", alignItems: "center" }}>
+            <Grid
+              item
+              xs={12}
+              style={{ display: "flex", alignItems: "center" }}
+            >
               <FormControl>
                 <FormLabel id="gender">Gender</FormLabel>
-                  <RadioGroup
-                    row
-                    aria-labelledby="gender"
-                    name="gender-select"
-                    align="center"
-                  >
-                  <FormControlLabel value="female" control={<Radio />} label="Female" />
-                  <FormControlLabel value="male" control={<Radio />} label="Male" />
-                  <FormControlLabel value="other" control={<Radio />} label="Other" />
+                <RadioGroup
+                  row
+                  aria-labelledby="gender"
+                  name="gender-select"
+                  align="center"
+                >
+                  <FormControlLabel
+                    value="female"
+                    control={<Radio />}
+                    label="Female"
+                  />
+                  <FormControlLabel
+                    value="male"
+                    control={<Radio />}
+                    label="Male"
+                  />
+                  <FormControlLabel
+                    value="other"
+                    control={<Radio />}
+                    label="Other"
+                  />
                 </RadioGroup>
               </FormControl>
             </Grid>
@@ -176,10 +198,10 @@ export default function CreateAccountPage({signInSuccess, openLoginPage}) {
             Create Account
           </Button>
         </Box>
-        <Link href="#" variant="body2" onClick={() => {openLoginPage()}}>
+        <Link as={RouterLink} to="/login" variant="body2">
           {"Already have an account? Sign In"}
         </Link>
       </Box>
     </Container>
-  )
+  );
 }

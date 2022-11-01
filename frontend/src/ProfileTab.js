@@ -1,7 +1,13 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileTab() {
-  return <Button variant="contained">Edit Profile</Button>;
+  const navigate = useNavigate();
+
+  return (
+    <Button onClick={() => navigate("/survey")} variant="contained">
+      Edit Profile
+    </Button>
+  );
 }
