@@ -2,10 +2,10 @@
 from fastapi import APIRouter, Body, Request, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-
+from io import BytesIO
 # Models import
 from api.models import UserModel, UserUpdateModel
-
+from api.image_storage import store_image_gcp
 # Config import
 from config import settings
 
@@ -34,6 +34,7 @@ def get_api_router(app):
         for doc in await request.app.mongodb["users"].find().to_list(length=100):
             users.append(doc)
         return JSONResponse(status_code=status.HTTP_200_OK, content=users)
+    
 
     # This path allows to create a new task
     @router.post("/user", response_description="Add User")
@@ -87,6 +88,17 @@ def get_api_router(app):
             return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
+    
+    # GCP image 
+    @router.post("/upload", response_description="upload image to gcp")
+    async def upload_image(request: Request, image_input= Body(...)):
+        print("request",type(image_input))
+        with open('profile_image.jpg','wb') as image:
+            image.write(image_input)
+            image.close()
+        
+        store_image_gcp('profile1')
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
     # We return our router
     return router
