@@ -6,9 +6,6 @@ from fastapi.responses import JSONResponse
 # Models import
 from api.models import UserModel, UserUpdateModel
 
-# GCP image import
-from api.image_storage import ImageManager
-
 # Config import
 from config import settings
 
