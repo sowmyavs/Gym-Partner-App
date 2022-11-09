@@ -96,18 +96,22 @@ def get_api_router(app):
 
      # GCP image 
     @router.post("/upload", response_description="upload image to gcp")
-    async def upload_image(request: Request, image_input= Body(...)):      
-        db = await request.app.mongodb["users"]
+    async def upload_image(request: Request, image_input= Body(...)):
+        print("request",type(image_input))
         
-        # store image into GCP 
+        # write file to local dir
+        with open('profile_image.jpg','wb') as image:
+            image.write(image_input)
+            image.close()
+        
+        # store image into GCP
         ImageManager.store_image_gcp('profile1')
 
-        # get image link from GCP
+        # TODO: get image link from GCP
 
-        # store image link in MongoDB
+        # TODO: store image link into MongoDB
 
-
-
+        
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
     # We return our router
