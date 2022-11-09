@@ -6,7 +6,7 @@ export default function ProfileTab() {
   const navigate = useNavigate();
 
   return (
-    <Button  onClick={() => navigate("/survey")} variant="contained">
+    <Button  onClick={() => navigate("/editProfile")} variant="contained">
       Edit Profile
     </Button>
   );
