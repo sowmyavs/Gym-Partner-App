@@ -2,8 +2,7 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import {useState, useEffect} from 'react';
-import {uploadFile} from "./helpers/google-cloud-storage";
-// const gcpFile = require("./helpers/google-cloud-storage");
+
 
 export default function ProfileTab() {
   const navigate = useNavigate();
