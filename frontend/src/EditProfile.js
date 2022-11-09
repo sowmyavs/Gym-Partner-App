@@ -1,35 +1,34 @@
 import React from "react";
-import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
 import Container from "@mui/material/Container";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Box,
   Button,
   Grid,
-  Input,
-  InputLabel,
+  IconButton,
   Slider,
   TextField,
 } from "@mui/material";
-
-const experienceLevels = [
-  {
-    value: 0,
-    label: "Novice",
-  },
-  {
-    value: 5,
-    label: "Intermediate",
-  },
-  {
-    value: 10,
-    label: "Experienced",
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
+  const navigate = useNavigate();
+  const experienceLevels = [
+    {
+      value: 0,
+      label: "Novice",
+    },
+    {
+      value: 5,
+      label: "Intermediate",
+    },
+    {
+      value: 10,
+      label: "Experienced",
+    },
+  ];
+
   return (
     <Container maxWidth="xs">
       <Box
@@ -43,6 +42,9 @@ export default function EditProfile() {
         }}
       >
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
+          <IconButton onClick={() => navigate("/")} sx={{ alignSelf: "start" }}>
+            <ArrowBackIcon></ArrowBackIcon>
+          </IconButton>
           <Grid item xs={12}>
             <h1>Complete Your Profile</h1>
           </Grid>
