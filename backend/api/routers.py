@@ -94,8 +94,8 @@ def get_api_router(app):
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-     # GCP image 
-    @router.post("/upload/{id}", response_description="upload image to gcp")
+     # add image to profile 
+    @router.post("/image/{id}", response_description="Upload image to user profile")
     async def upload_image(id: str, request: Request, image_input = Body(...)):        
         # write file to local dir
         with open('profile_image.jpg','wb') as image:
@@ -118,6 +118,19 @@ def get_api_router(app):
         update_result = await db.update_one({"_id": id}, {"$push": {"images": image_url}})
  
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
+
+    # delete image from profile
+    @router.delete("/image/{id}/{index}", response_description="Delete image from user profile")
+    async def delete_image(id: str, request, Request, index: str):
+        db = request.app.mongodb["users"]
+
+        # Find user, then the image that is to be deleted and delete it from MongoDB
+
+        # Find photo in GCP, delete it
+
+        # re-organize photos in GCP
+        
+        return " "
 
     # We return our router
     return router
