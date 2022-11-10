@@ -52,16 +52,44 @@ export default function EditProfile() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const uploadImage = async (image) => {
+    let blob = image.slice(0, image.size, "image/jpg");
+    let newFile = new File([blob], "1.jpg", { type: "image/jpg" });
+    let formData = new FormData();
+    formData.append("imgfile", newFile);
+    const response = await fetch(`/image/${localStorage.getItem("id")}`, {
+      method: "POST",
+      body: newFile,
+    });
+    if (response.status == 201) {
+      console.log("Image uploaded");
+    } else {
+      console.log("Error uploading image");
+      console.log(response);
+    }
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const bio = data.get("bio");
     const experienceLevel = data.get("experience-level");
-    console.log(bio);
-    console.log(experienceLevel);
-    console.log(images);
-    console.log(favGym);
-    console.log(desiredExercise);
+    Array.from(images).forEach((image) => uploadImage(image));
+
+    // TODO waiting on backend PUT to be updated
+    // const response = await fetch(`/user/${localStorage.getItem("id")}`, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     bio: bio,
+    //     experience_level: experienceLevel,
+    //     desired_exercise: desiredExercise,
+    //     favorite_gym: favGym,
+    //   }),
+    // });
+    // console.log(response);
   };
 
   return (
@@ -100,7 +128,6 @@ export default function EditProfile() {
                 multiple
                 accept=".png,.jpg,"
                 onChange={(e) => {
-                  console.log(e);
                   setImages(e.target.files);
                 }}
               />
