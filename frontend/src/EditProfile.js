@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,6 +6,9 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   Grid,
   IconButton,
   Slider,
@@ -16,6 +19,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
   const navigate = useNavigate();
+  const [desiredExercise, setDesiredExercise] = useState([]);
+  const [images, setImages] = useState([]);
+  const [favGym, setFavGym] = useState();
+  const gyms = ["The Nick", "The Shell", "Off Campus Gym"];
   const experienceLevels = [
     {
       value: 0,
@@ -30,27 +37,32 @@ export default function EditProfile() {
       label: "Experienced",
     },
   ];
-  const desiredExercise = [
-    {
-      value: 0,
-      label: "Cardio"
-    },
-    {
-      value: 10,
-      label: "Strength Training"
+
+  /**
+   * State manager for desiredExercise checkboxes.
+   */
+  const handleCheckbox = (event) => {
+    const exercise = event.target.labels[0].innerText;
+    if (desiredExercise.includes(exercise)) {
+      setDesiredExercise((prev) =>
+        prev.filter((toRemove) => toRemove !== exercise)
+      );
+    } else {
+      setDesiredExercise([...desiredExercise, exercise]);
     }
-  ]
-  const gyms = [
-    {
-      label: "The Nick"
-    }, 
-    {
-      label: "The Shell"
-    }, 
-    {
-      label: "Off Campus Gym"
-    }
-  ]
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const bio = data.get("bio");
+    const experienceLevel = data.get("experience-level");
+    console.log(bio);
+    console.log(experienceLevel);
+    console.log(images);
+    console.log(favGym);
+    console.log(desiredExercise);
+  };
 
   return (
     <Container maxWidth="xs">
@@ -63,13 +75,17 @@ export default function EditProfile() {
           alignItems: "center",
           textAlign: "center",
         }}
+        onSubmit={handleSubmit}
       >
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
-          <Grid item xs={12} sx={{display: 'flex'}}>
-            <IconButton onClick={() => navigate("/")} sx={{ alignSelf: "start" }}>
+          <Grid item xs={12} sx={{ display: "flex" }}>
+            <IconButton
+              onClick={() => navigate("/")}
+              sx={{ alignSelf: "start" }}
+            >
               <ArrowBackIcon></ArrowBackIcon>
             </IconButton>
-            <Box sx={{flexGrow: 1}}>
+            <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h5">Complete Your Profile</Typography>
             </Box>
           </Grid>
@@ -83,8 +99,19 @@ export default function EditProfile() {
                 hidden
                 multiple
                 accept=".png,.jpg,"
+                onChange={(e) => {
+                  console.log(e);
+                  setImages(e.target.files);
+                }}
               />
             </Button>
+            {images.length > 0 && (
+              <>
+                {Array.from(images).map((image) => {
+                  return <code key={image.name}>{image.name},</code>;
+                })}
+              </>
+            )}
           </Grid>
           <Grid item xs={6}>
             <p>1-6 Profile Photos Required (JPEG or PNG)</p>
@@ -106,44 +133,92 @@ export default function EditProfile() {
             <Slider
               name="experience-level"
               defaultValue={5}
-              step={.01}
+              step={0.01}
               marks={experienceLevels}
               min={0}
               max={10}
               track={false}
             />
           </Grid>
-          <Grid item xs={12}>
-            <h3>Desired Exercise:</h3>
-            <Slider
-              name="desired-exercise"
-              defaultValue={5}
-              step={.01}
-              marks={desiredExercise}
-              min={0}
-              max={10}
-              track={false}
-              color="secondary"
-            />
+          <Grid container item xs={12}>
+            <Grid item xs={12}>
+              <h3>Desired Exercise:</h3>
+            </Grid>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <FormGroup>
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Cardio"
+                />
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Cycling"
+                />
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Strength Training"
+                />
+              </FormGroup>
+              <FormGroup>
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Yoga"
+                />
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Crossfit"
+                />
+                <FormControlLabel
+                  onChange={handleCheckbox}
+                  control={<Checkbox />}
+                  label="Sports"
+                />
+              </FormGroup>
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <Autocomplete
+              value={favGym || null}
+              onChange={(event, newValue) => {
+                setFavGym(newValue);
+              }}
               fullWidth
               required
               options={gyms}
               name="fav-gym"
               label="Favorite Gym"
-              renderInput={(params) => <TextField {...params} label="Preferred Gym*" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Preferred Gym*" />
+              )}
             ></Autocomplete>
           </Grid>
           <Grid item xs={12}>
-            <Button type="submit" fullWidth variant="contained">
+            <Button
+              disabled={
+                images.length === 0 || desiredExercise.length === 0 || !favGym
+              }
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
               COMPLETE
             </Button>
           </Grid>
         </Grid>
       </Box>
     </Container>
-    
   );
 }
