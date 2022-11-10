@@ -3,12 +3,14 @@ import Container from "@mui/material/Container";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
+  Autocomplete,
   Box,
   Button,
   Grid,
   IconButton,
   Slider,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +30,27 @@ export default function EditProfile() {
       label: "Experienced",
     },
   ];
+  const desiredExercise = [
+    {
+      value: 0,
+      label: "Cardio"
+    },
+    {
+      value: 10,
+      label: "Strength Training"
+    }
+  ]
+  const gyms = [
+    {
+      label: "The Nick"
+    }, 
+    {
+      label: "The Shell"
+    }, 
+    {
+      label: "Off Campus Gym"
+    }
+  ]
 
   return (
     <Container maxWidth="xs">
@@ -42,20 +65,13 @@ export default function EditProfile() {
         }}
       >
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
-          <IconButton onClick={() => navigate("/")} sx={{ alignSelf: "start" }}>
-            <ArrowBackIcon></ArrowBackIcon>
-          </IconButton>
-          <Grid item xs={12}>
-            <h1>Complete Your Profile</h1>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              name="zip-code"
-              label="Zip Code"
-              type="text"
-            ></TextField>
+          <Grid item xs={12} sx={{display: 'flex'}}>
+            <IconButton onClick={() => navigate("/")} sx={{ alignSelf: "start" }}>
+              <ArrowBackIcon></ArrowBackIcon>
+            </IconButton>
+            <Box sx={{flexGrow: 1}}>
+              <Typography variant="h5">Complete Your Profile</Typography>
+            </Box>
           </Grid>
           <Grid item xs={6}>
             <Button fullWidth variant="outlined" component="label">
@@ -89,20 +105,36 @@ export default function EditProfile() {
             <h3>Experience Level:</h3>
             <Slider
               name="experience-level"
-              defaultValue={3}
-              step={1}
+              defaultValue={5}
+              step={.01}
               marks={experienceLevels}
               min={0}
               max={10}
+              track={false}
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <h3>Desired Exercise:</h3>
+            <Slider
+              name="desired-exercise"
+              defaultValue={5}
+              step={.01}
+              marks={desiredExercise}
+              min={0}
+              max={10}
+              track={false}
+              color="secondary"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Autocomplete
               fullWidth
+              required
+              options={gyms}
               name="fav-gym"
               label="Favorite Gym"
-              type="text"
-            ></TextField>
+              renderInput={(params) => <TextField {...params} label="Preferred Gym*" />}
+            ></Autocomplete>
           </Grid>
           <Grid item xs={12}>
             <Button type="submit" fullWidth variant="contained">
@@ -112,5 +144,6 @@ export default function EditProfile() {
         </Grid>
       </Box>
     </Container>
+    
   );
 }
