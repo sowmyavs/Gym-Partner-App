@@ -27,7 +27,7 @@ export default function ProfileTab() {
     console.log("test:",newFile);
     let formData = new FormData();
     formData.append("imgfile", newFile);
-    await fetch("/upload",{
+    await fetch(`/upload/${localStorage.getItem("id")}`,{
         method: "POST",
         body: newFile,
     })
