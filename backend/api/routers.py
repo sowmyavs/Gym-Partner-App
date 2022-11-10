@@ -102,7 +102,7 @@ def get_api_router(app):
             image.write(image_input)
             image.close()
         
-        # Connect to DB, make sure the user exists
+        # Connect to DB, make sure the user exists, raise error if not
         db = request.app.mongodb["users"]
         if (user := await db.find_one({"_id": id})) is None:
             raise HTTPException(status_code=404, detail=f"User {id} not found")
@@ -115,7 +115,7 @@ def get_api_router(app):
         image_url = ImageManager.get_link(file_name)
 
         # TODO: store image link into MongoDB (not storing correctly)
-        user['images'].append(image_url)
+        update_result = await db.update_one({"_id": id}, {"$set": {"images": image_url}})
  
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 

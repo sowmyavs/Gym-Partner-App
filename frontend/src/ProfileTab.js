@@ -30,10 +30,7 @@ export default function ProfileTab() {
     await fetch(`/upload/${localStorage.getItem("id")}`,{
         method: "POST",
         body: newFile,
-    })
-
-
-    
+    })   
   }
 
 
@@ -43,9 +40,7 @@ export default function ProfileTab() {
       Edit Profile
     </Button>
     <input type="file"  accept="image/*" onChange={onImageChange1} />
-    {/* { imageURLs.map(imageSrc => <img src={imageSrc}/>) } */}
-
-    
+    {/* { imageURLs.map(imageSrc => <img src={imageSrc}/>) } */} 
    </div>
   );
 }
