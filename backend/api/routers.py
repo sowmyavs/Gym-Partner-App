@@ -115,7 +115,7 @@ def get_api_router(app):
         image_url = ImageManager.get_link(file_name)
 
         # TODO: store image link into MongoDB (not storing correctly)
-        update_result = await db.update_one({"_id": id}, {"$set": {"images": image_url}})
+        update_result = await db.update_one({"_id": id}, {"$push": {"images": image_url}})
  
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
