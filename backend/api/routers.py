@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 # Models import
-from api.models import UserModel, UserUpdateModel
+from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel
 
 # GCP Manager import
 from api.image_storage import ImageManager
@@ -82,6 +82,28 @@ def get_api_router(app):
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
+    # update user preferences
+    @router.put("/user/preferences/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: PreferencesUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
     # This path allows to delete a user
     @router.delete("/user/{id}", response_description="Delete User")
     async def delete_user(id: str, request: Request):
@@ -123,13 +145,19 @@ def get_api_router(app):
     @router.delete("/image/{id}/{index}", response_description="Delete image from user profile")
     async def delete_image(id: str, request, Request, index: str):
         db = request.app.mongodb["users"]
-
         # Find user, then the image that is to be deleted and delete it from MongoDB
+        if (user := await db.find_one({"_id": id})) is None:
+            raise HTTPException(status_code=404, detail=f"User {id} not found")
+        
+        file_name = id + '-' + index
+        image_to_delete_url = ImageManager.get_link(file_name)
+        delete_result = await db.update_one({"_id": id}, {"$pull": {"images": image_to_delete_url}})
 
+        
         # Find photo in GCP, delete it
 
         # re-organize photos in GCP
-        
+
         return " "
 
     # We return our router

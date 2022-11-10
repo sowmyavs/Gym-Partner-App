@@ -10,9 +10,10 @@ class UserModel(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
     bio: str = Field(...)
-    images: list = Field(...) # ****THIS WILL HAVE TO BE CHANGED ****
-    preset_attributes: str = Field(...)
-    favorite_gym: list = Field(...)
+    images: list = Field(...) 
+    experience_level: int = Field(...)
+    desired_exercise: list = Field(...)
+    favorite_gym: str = Field(...)
     liked_users: list = Field(...)
     matched_users: list = Field(...)
     blocked_users: list = Field(...)
@@ -28,8 +29,9 @@ class UserModel(BaseModel):
                 "password": "password",
                 "bio": "140 char max",
                 "images": [],
-                "preset_attributes": "ex: Types of exercise, experience level, etc",
-                "favorite_gym": ["gym_name", "gym_address"],
+                "experience_level": int("0"),
+                "desired_exercise": [],
+                "favorite_gym": "The Nick",
                 "liked_users": [],
                 "matched_users": [],
                 "blocked_users": []
@@ -43,9 +45,10 @@ class UserUpdateModel(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
     bio: str = Field(...)
-    images: list = Field(...) # ****THIS WILL HAVE TO BE CHANGED ****
-    preset_attributes: str = Field(...)
-    favorite_gym: list = Field(...)
+    images: list = Field(...) 
+    experience_level: int = Field(...)
+    desired_exercise: list = Field(...)
+    favorite_gym: str = Field(...)
     liked_users: list = Field(...)
     matched_users: list = Field(...)
     blocked_users: list = Field(...)
@@ -59,10 +62,27 @@ class UserUpdateModel(BaseModel):
                 "password": "password",
                 "bio": "140 char max",
                 "images": [],
-                "preset_attributes": "ex: Types of exercise, experience level, etc",
-                "favorite_gym": ["gym_name", "gym_address"],
+                "experience_level": int("0"),
+                "desired_exercise": [],
+                "favorite_gym": "The Nick",
                 "liked_users": [],
                 "matched_users": [],
                 "blocked_users": []
+            }
+        }
+
+class PreferencesUpdateModel(BaseModel):
+    bio: str = Field(...)
+    experience_level: int = Field(...)
+    desired_exercise: list = Field(...)
+    favorite_gym: str = Field()
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "bio": " ",
+                "experience_level": int("0"),
+                "desired_exercise": [],
+                "favorite_gym": "The Nick"
             }
         }

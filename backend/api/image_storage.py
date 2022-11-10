@@ -6,6 +6,8 @@ import os
 GCP_BUCKET_NAME = "bigbuffbadgers"
 GCP_KEY = 'key.json'
 GCP_PROJECT_NAME = "BigBuffBadgers"
+API_ENDPOINT = 'https://storage.googleapis.com'
+
 
 class ImageManager:
     def store_image_gcp(gcp_image_name,image_path="../profile_image.jpg"):
@@ -34,7 +36,7 @@ class ImageManager:
 
     # Returns a link to a specific GCP image
     def get_link(file_name):
-        API_ENDPOINT = 'https://storage.googleapis.com'
         image_link = API_ENDPOINT + f"/{GCP_BUCKET_NAME}/profileimages/{file_name}.jpg"
         return image_link
+
         
