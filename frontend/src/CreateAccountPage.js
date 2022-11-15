@@ -71,7 +71,7 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
       let user = await response.json();
       console.log(user);
       localStorage.setItem("id", user._id);
-      navigate("/survey");
+      navigate("/editProfile");
     }
 
     if (allFilled) {

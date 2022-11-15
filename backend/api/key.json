@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "bigbuffbadgers",
+  "private_key_id": "18d179da19fba536c6c8c75c99556d19965bb925",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC7MY8SxOJDhUEk\nY60tT8jVyaT/EqTSeyaCc2TBF8QMCIe7j0RM/pVgF52ZXGzBeLsODLhlESshyWvu\nxnn5oRwv1V9FFJADOGHAfUeZQCPfp2sf66/r3SPHQ7Qhk2a8l8d6oktO+yX+PrVW\nstu6Y/i1ns6reUwnxkmOdG4R7Zv8m7glKjHIFjnUFLzZb44O2y52vpDU3MwLpox1\nMB95rC9XtzfLRWMM5HYpj9+keOiAZPuZ15jv2TazXGc4pW+XfskZxvPOxbjV/7fe\nOPg0hE+5H777t6EPhUnvZvNfDCLRs3bLmHIN3NWltpD/1EHWmFOh386HG/kxgEYJ\nNNCNud9HAgMBAAECggEANBVRbBT4qXW5jsDnDbztscIVlNzgnCmkqNYneew9YWW8\nMkzl4ZBSCnb3pBSJs/j9/qY+Zex1dkSfMcPqazDO8WYqSEO04Bh/ZjnVQogMky13\nSl3eyD7ytf4Z79+dzapjV7UxQ+vwAcH73YANT9qB+DKT6TTqIgTzMV4mw/k7FfjY\niT9ybjP429fxpZVabc2EQppfR0NTm/b1zqI2BLOHJdDYlI6andB7OCI7zMIiGaJt\nTCfWy1z6ua6Z5LIaCMnF2rNZxwEUd7SrRa5HOlAo3lt/FpWNRkooLXoVaEVoPGBi\nJx1QPQo24qctCM++4WP+ro6GdR5COBPoVX++yg9+CQKBgQD9vU3V18XxusI+cBfF\nj17yYdbcK3jDFXUIAbuz9KRLbM35kHwJ8yQdsfey6q6c16t1VIlRqikyB8/CWI44\nApARVzI3FQ38GN9MvsgE7/jM5bHggxeecsumbugiojGkGAhT5r53blAaz0MUR9Ef\n5TsxMunXoyuuwZlbyTxcSmgBmQKBgQC83HxT4pPWhf1GduQOkOiqoCb5v03+vKqU\n51z3FfVE7nhcg4kjA+egix3kpeImfHjuN3mh7aSlKIlxKEfsXh5hGk2F52kjdeHW\npu8aFAM6koGYVGFsxdODe78U/e2omb+ZI+GpGyGqwey9/qsPrP56+o0FMcbQWn2C\nUW8wCqcz3wKBgBnAK3UHR9xnYq0pfRAco7sfeMmxU7kgpVbhriXuLvpEmYa5Rg1Q\ncprc49FxhbT/IjRvFtyF01Zzen8zs4M1p19LJRp39YpfD9JfDjeKDwrkSLALPctj\nxQ0n9kEFitonYjj5ktzWAiUmYZ1eSHffMKmmjBrJQXajySeKfai0GGgJAoGAFGxH\naY7T69vbcrZCnSygbGsbK+C7H3Ppgmauj+2o80ZSb7atqsKuVpcUqXgix4SoUyJe\nndsj9dQ3YKw5ct8Oq/N7NKK8pOAHhv3QV2KYosnbB80AKBIQeGR2Wl/HRncx1+6g\nZXgQoPWNk1Ipz20mq8fSXiBu3nMapXAG9QwB3sMCgYABejw/VYMuoj3DdVPGJPML\nCfsaJtBGMYqsWrqy+dcsm3iobB/pvHjVKqp77Ef2kbZ6CYdFvwuetB57droQjNdr\nRs7fTcPYbay8mpzl4juxZ+yaiIduFWE7kBo7wESaw9azaAsNdKJTJchM9epL326u\ncV1PdrWIcvD0+JI+qv0KXA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "bigbuffbadgers@bigbuffbadgers.iam.gserviceaccount.com",
+  "client_id": "101240884547474495979",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bigbuffbadgers%40bigbuffbadgers.iam.gserviceaccount.com"
+}
