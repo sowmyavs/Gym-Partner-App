@@ -76,20 +76,19 @@ export default function EditProfile() {
     const experienceLevel = data.get("experience-level");
     Array.from(images).forEach((image) => uploadImage(image));
 
-    // TODO waiting on backend PUT to be updated
-    // const response = await fetch(`/user/${localStorage.getItem("id")}`, {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     bio: bio,
-    //     experience_level: experienceLevel,
-    //     desired_exercise: desiredExercise,
-    //     favorite_gym: favGym,
-    //   }),
-    // });
-    // console.log(response);
+    const response = await fetch(`/user/preferences/${localStorage.getItem("id")}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bio: bio,
+        experience_level: experienceLevel,
+        desired_exercise: desiredExercise,
+        favorite_gym: favGym,
+      }),
+    });
+    console.log(response);
   };
 
   return (
@@ -160,7 +159,7 @@ export default function EditProfile() {
             <Slider
               name="experience-level"
               defaultValue={5}
-              step={0.01}
+              step={1}
               marks={experienceLevels}
               min={0}
               max={10}
