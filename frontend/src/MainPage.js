@@ -24,9 +24,10 @@ export default function MainPage() {
   return localStorage.getItem("id") ? (
     <Container
       disableGutters
+      maxWidth={false}
       sx={{ height: "100vh", display: "flex" }}
     >
-      <Box>
+      <Box width={100}>
         <Tabs
           orientation="vertical"
           value={value}
@@ -37,7 +38,7 @@ export default function MainPage() {
             borderColor: "divider",
             height: "100vh",
             position: "absolute",
-            left: 0
+            left: 0,
           }}
           TabIndicatorProps={{
             style: 
