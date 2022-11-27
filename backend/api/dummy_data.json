@@ -1,0 +1,120 @@
+[
+    {
+        "_id": "0",
+        "name": "Zach Berglund",
+        "email": "zberglund@wisc.edu",
+        "password": "password",
+        "bio": "140 char max",
+        "images": [],
+        "preset_attributes": "ex: Types of exercise, experience level, etc",
+        "favorite_gym": [
+            "gym_name",
+            "gym_address"
+        ],
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": []
+
+    },
+    {
+        "_id": "1",
+        "name": "Sowmya Vemparala",
+        "email": "svemparala@wisc.edu",
+        "password": "password",
+        "bio": "test ",
+        "images": [
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-0.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-1.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-2.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-3.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-4.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-5.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/prefix-2-6.jpg"
+        ],
+        "preset_attributes": "ex: Types of exercise, experience level, etc",
+        "favorite_gym": "The Nick",
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": [],
+        "desired_exercise": [
+            "Cardio",
+            "Crossfit",
+            "Sports"
+        ],
+        "experience_level": 5
+    },
+    {
+        "_id": "2",
+        "name": "Zach Berglund",
+        "email": "new_email@gmail.com",
+        "password": "pw",
+        "bio": "140 char max",
+        "images": [],
+        "preset_attributes": "ex: Types of exercise, experience level, etc",
+        "favorite_gym": [
+            "gym_name",
+            "gym_address"
+        ],
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": []
+    },
+    {
+        "_id": "3",
+        "name": "New User",
+        "email": "some_email@yahoo.com",
+        "password": "theirpassword",
+        "bio": "140 char max",
+        "images": [],
+        "preset_attributes": "ex: Types of exercise, experience level, etc",
+        "favorite_gym": "The Nick",
+        "desired_exercise": [
+            "Cardio"
+        ],
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": []
+    },
+    {
+        "_id": "5",
+        "name": "Jackson G",
+        "email": "email@wisc",
+        "password": "pass",
+        "bio": "updated bio",
+        "images": [
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/1032162711-0.jpg",
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/1032162711-1.jpg"
+        ],
+        "preset_attributes": "ex: Types of exercise, experience level, etc",
+        "favorite_gym": "The Nick",
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": [],
+        "desired_exercise": [
+            "Cardio",
+            "Crossfit"
+        ],
+        "experience_level": 8
+    },
+    {
+        "_id": "4",
+        "name": "j g",
+        "email": "jg@wisc",
+        "password": "pass",
+        "bio": "bioooo",
+        "images": [
+            "https://storage.googleapis.com/bigbuffbadgers/profileimages/2666518819-0.jpg"
+        ],
+        "experience_level": 0,
+        "desired_exercise": [
+            "Sports",
+            "Crossfit",
+            "Strength Training"
+
+        ],
+        "favorite_gym": "The Nick",
+        "liked_users": [],
+        "matched_users": [],
+        "blocked_users": []
+    }
+]
