@@ -1,10 +1,13 @@
 # Fast API imports
-from fastapi import APIRouter, Body, Request, status, HTTPException
+from fastapi import APIRouter, Body, Request, status, HTTPException, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 # Models import
-from api.models import UserModel, UserUpdateModel
+from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel
+
+# GCP Manager import
+from api.image_storage import ImageManager
 
 # Config import
 from config import settings
@@ -31,62 +34,131 @@ def get_api_router(app):
     @router.get("/users", response_description="List Users")
     async def list_users(request: Request):
         users = []
-        for doc in await request.app.mongodb["users"].find().to_list(length=100):
+        db = request.app.mongodb["users"]
+        for doc in await db.find().to_list(length=100):
             users.append(doc)
         return JSONResponse(status_code=status.HTTP_200_OK, content=users)
 
-    # This path allows to create a new task
+    # This path allows to create a new user
     @router.post("/user", response_description="Add User")
     async def add_user(request: Request, user: UserModel = Body(...)):
+        db = request.app.mongodb["users"]
         user = jsonable_encoder(user)
-        new_user = await request.app.mongodb["users"].insert_one(user)
-        created_user = await request.app.mongodb["users"].find_one(
-            {"_id": new_user.inserted_id}
-        )
+        new_user = await db.insert_one(user)
+        created_user = await db.find_one({"_id": new_user.inserted_id})
         # Return a success created response
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_user)
+        return JSONResponse(status_code=status.HTTP_201_CREATED,
+                            content=created_user)
 
-    # This path allows to get a task
+    # This path allows to get a user
     @router.get("/user/{id}", response_description="Get User")
     async def get_user(id: str, request: Request):
-        if (user := await request.app.mongodb["users"].find_one({"_id": id})) is not None:
-            return JSONResponse(status_code=status.HTTP_201_CREATED, content=user)
-        # Return an error if no task if found
+        db = request.app.mongodb["users"]
+        if (user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=user)
+        # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-    # This path allows to update a task
+    # This path allows to update a user
     @router.put("/user/{id}", response_description="Update User")
     async def update_user(id: str, request: Request, user: UserUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
         user = {k: v for k, v in user.dict().items() if v is not None}
 
         if len(user) >= 1:
-            update_result = await request.app.mongodb["users"].update_one(
-                {"_id": id}, {"$set": user}
-            )
+            update_result = await db.update_one({"_id": id}, {"$set": user})
 
             if update_result.modified_count == 1:
-                if (
-                        updated_user := await request.app.mongodb["users"].find_one({"_id": id})
-                ) is not None:
-                    return JSONResponse(status_code=status.HTTP_201_CREATED, content=updated_user)
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
 
-        if (
-                existing_user := await request.app.mongodb["users"].find_one({"_id": id})
-        ) is not None:
-            return JSONResponse(status_code=status.HTTP_201_CREATED, content=existing_user)
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
 
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-    # This path allows to delete a task
+    # update user preferences
+    @router.put("/user/preferences/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: PreferencesUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+    # This path allows to delete a user
     @router.delete("/user/{id}", response_description="Delete User")
     async def delete_user(id: str, request: Request):
-        delete_result = await request.app.mongodb["users"].delete_one({"_id": id})
-        
+        db = request.app.mongodb["users"]
+
+        delete_result = await db.delete_one({"_id": id})
+
         if delete_result.deleted_count == 1:
             return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+     # add image to profile 
+    @router.post("/image/{id}", response_description="Upload image to user profile")
+    async def upload_image(id: str, request: Request, image_input = Body(...)):        
+        # write file to local dir
+        with open('profile_image.jpg','wb') as image:
+            image.write(image_input)
+            image.close()
+        
+        # Connect to DB, make sure the user exists, raise error if not
+        db = request.app.mongodb["users"]
+        if (user := await db.find_one({"_id": id})) is None:
+            raise HTTPException(status_code=404, detail=f"User {id} not found")
+            
+        # store image into GCP
+        file_name = id + '-' + str(len(user['images']))
+        ImageManager.store_image_gcp(file_name)
+        
+        # get the link of the photo in GCP
+        image_url = ImageManager.get_link(file_name)
+
+        # TODO: store image link into MongoDB (not storing correctly)
+        update_result = await db.update_one({"_id": id}, {"$push": {"images": image_url}})
+ 
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
+
+    # delete image from profile
+    @router.delete("/image/{id}/{index}", response_description="Delete image from user profile")
+    async def delete_image(id: str, request, Request, index: str):
+        db = request.app.mongodb["users"]
+        # Find user, then the image that is to be deleted and delete it from MongoDB
+        if (user := await db.find_one({"_id": id})) is None:
+            raise HTTPException(status_code=404, detail=f"User {id} not found")
+        
+        file_name = id + '-' + index
+        image_to_delete_url = ImageManager.get_link(file_name)
+        delete_result = await db.update_one({"_id": id}, {"$pull": {"images": image_to_delete_url}})
+
+        
+        # Find photo in GCP, delete it
+
+        # re-organize photos in GCP
+
+        return " "
 
     # We return our router
     return router

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import crc from 'crc';
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -13,16 +14,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
-import _uniqueId from "lodash/uniqueId";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
   const navigate = useNavigate();
-  const [id] = useState(_uniqueId("prefix-"));
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    let id = crc.crc32(data.get("email"));
     let email = data.get("email");
     let password = data.get("password");
     let firstName = data.get("first-name");
@@ -71,7 +71,7 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
       let user = await response.json();
       console.log(user);
       localStorage.setItem("id", user._id);
-      navigate("/survey");
+      navigate("/editProfile");
     }
 
     if (allFilled) {
