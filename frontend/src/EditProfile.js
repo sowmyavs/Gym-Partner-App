@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ImagePreview from "./ImagePreview";
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -152,10 +153,7 @@ export default function EditProfile() {
                 type="file"
                 hidden
                 multiple
-                accept=".png,.jpg,"
-                // onChange={(e) => {
-                //   setImages(prev => [...prev, e.target.files]);
-                // }}
+                accept=".png,.jpg,.gif"
                 onChange={(e) => uploadImage(e.target.files)}
               />
             </Button>
@@ -167,17 +165,7 @@ export default function EditProfile() {
             <>
               <Grid container item xs={12}>
                 {Array.from(images).map((image) => {
-                  if (image.name) {
-                    return <code key={image.name}>{image.name},</code>;
-                  } else {
-                    return (
-                      <img
-                        key={image}
-                        src={image}
-                        style={{ width: 120, margin: 2 }}
-                      />
-                    );
-                  }
+                  return <ImagePreview key={image} image={image} />;
                 })}
                 {uploading && (
                   <CircularProgress style={{ marginTop: 20, marginLeft: 40 }} />
