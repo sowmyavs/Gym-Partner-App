@@ -96,7 +96,6 @@ export default function EditProfile() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const experienceLevel = data.get("experience-level");
-    Array.from(images).forEach((image) => uploadImage(image));
 
     const response = await fetch(
       `/user/preferences/${localStorage.getItem("id")}`,
@@ -150,7 +149,6 @@ export default function EditProfile() {
               Add Images <AddPhotoAlternateIcon sx={{ ml: 2 }} />
               <input
                 name="images"
-                required
                 type="file"
                 hidden
                 multiple
