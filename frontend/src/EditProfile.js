@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormGroup,
   Grid,
@@ -19,6 +20,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
   const navigate = useNavigate();
+  const [user, setUser] = useState();
+  const [uploading, setUploading] = useState(false);
+  const [bio, setBio] = useState("");
   const [desiredExercise, setDesiredExercise] = useState([]);
   const [images, setImages] = useState([]);
   const [favGym, setFavGym] = useState();
@@ -38,12 +42,21 @@ export default function EditProfile() {
     },
   ];
 
+  useEffect(async () => {
+    const response = await fetch(`/user/${localStorage.getItem("id")}`);
+    const json = await response.json();
+    setUser(json);
+    setBio(json.bio);
+    setFavGym(json.favorite_gym);
+    setImages(json.images);
+  }, []);
+
   /**
    * State manager for desiredExercise checkboxes.
    */
   const handleCheckbox = (event) => {
     // accessing target properties to get exercise string label
-    const exercise = event.target.labels[0].innerText; 
+    const exercise = event.target.labels[0].innerText;
     if (desiredExercise.includes(exercise)) {
       setDesiredExercise((prev) =>
         prev.filter((toRemove) => toRemove !== exercise)
@@ -54,44 +67,57 @@ export default function EditProfile() {
   };
 
   // will have to get index of photo that user is trying to update
-  const uploadImage = async (image) => {
-    let blob = image.slice(0, image.size, "image/jpg");
-    let newFile = new File([blob], "1.jpg", { type: "image/jpg" });
-    let formData = new FormData();
-    formData.append("imgfile", newFile);
-    const response = await fetch(`/image/${localStorage.getItem("id")}`, {
-      method: "POST",
-      body: newFile,
-    });
-    if (response.status == 201) {
-      console.log("Image uploaded");
-    } else {
-      console.log("Error uploading image");
-      console.log(response);
+  const uploadImage = async (imageList) => {
+    setUploading(true);
+    for (const image of Array.from(imageList)) {
+      let blob = image.slice(0, image.size, image.type);
+      let newFile = new File([blob], image.name, { type: image.type });
+      let formData = new FormData();
+      formData.append("imgfile", newFile);
+      const response = await fetch(`/image/${localStorage.getItem("id")}`, {
+        method: "POST",
+        body: newFile,
+      });
+      if (response.status == 201) {
+        console.log("Image uploaded");
+      } else {
+        console.log("Error uploading image");
+        console.log(response);
+      }
     }
+    const response = await fetch(`/user/${localStorage.getItem("id")}`);
+    const json = await response.json();
+    setImages(json.images);
+    setUploading(false);
   };
 
-    // CR: user confirmation upon submit
+  // CR: user confirmation upon submit
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const bio = data.get("bio");
     const experienceLevel = data.get("experience-level");
     Array.from(images).forEach((image) => uploadImage(image));
 
-    const response = await fetch(`/user/preferences/${localStorage.getItem("id")}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        bio: bio,
-        experience_level: experienceLevel,
-        desired_exercise: desiredExercise,
-        favorite_gym: favGym,
-      }),
-    });
-    console.log(response);
+    const response = await fetch(
+      `/user/preferences/${localStorage.getItem("id")}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bio: bio,
+          experience_level: experienceLevel,
+          desired_exercise: desiredExercise,
+          favorite_gym: favGym,
+        }),
+      }
+    );
+    if (response.status != 201) {
+      console.log(response);
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -129,23 +155,43 @@ export default function EditProfile() {
                 hidden
                 multiple
                 accept=".png,.jpg,"
-                onChange={(e) => {
-                  setImages(e.target.files);
-                }}
+                // onChange={(e) => {
+                //   setImages(prev => [...prev, e.target.files]);
+                // }}
+                onChange={(e) => uploadImage(e.target.files)}
               />
             </Button>
-            {images.length > 0 && (
-              <>
-              {/* CR: User should be able to see already uploaded images */}
-                {Array.from(images).map((image) => { 
-                  return <code key={image.name}>{image.name},</code>;
-                })}
-              </>
-            )}
           </Grid>
           <Grid item xs={6}>
             <p>1-6 Profile Photos Required (JPEG or PNG)</p>
           </Grid>
+          {images.length > 0 && (
+            <>
+              <Grid container item xs={12}>
+                {Array.from(images).map((image) => {
+                  if (image.name) {
+                    return <code key={image.name}>{image.name},</code>;
+                  } else {
+                    return (
+                      <img
+                        key={image}
+                        src={image}
+                        style={{ width: 120, margin: 2 }}
+                      />
+                    );
+                  }
+                })}
+                {uploading && (
+                  <CircularProgress style={{ marginTop: 20, marginLeft: 40 }} />
+                )}
+              </Grid>
+
+              {/* CR: User should be able to see already uploaded images
+                {Array.from(images).map((image) => {
+                  return <code key={image.name}>{image.name},</code>;
+                })} */}
+            </>
+          )}
           <Grid item xs={12}>
             <TextField
               multiline
@@ -155,7 +201,9 @@ export default function EditProfile() {
               name="bio"
               label="Bio"
               type="text"
+              value={bio}
               placeholder="Write about yourself... (max: 140 characters)"
+              onChange={(event) => setBio(event.target.value)}
             ></TextField>
           </Grid>
           <Grid item xs={12}>
@@ -221,7 +269,7 @@ export default function EditProfile() {
           </Grid>
           <Grid item xs={12}>
             <Autocomplete
-              value={favGym || null}
+              value={favGym || "The Nick"}
               onChange={(event, newValue) => {
                 setFavGym(newValue);
               }}
@@ -237,8 +285,8 @@ export default function EditProfile() {
           </Grid>
           <Grid item xs={12}>
             <Button
-            // CR: explain attributes
-            // could store attrs in object
+              // CR: explain attributes
+              // could store attrs in object
               disabled={
                 images.length === 0 || desiredExercise.length === 0 || !favGym
               }
