@@ -42,7 +42,8 @@ export default function EditProfile() {
    * State manager for desiredExercise checkboxes.
    */
   const handleCheckbox = (event) => {
-    const exercise = event.target.labels[0].innerText;
+    // accessing target properties to get exercise string label
+    const exercise = event.target.labels[0].innerText; 
     if (desiredExercise.includes(exercise)) {
       setDesiredExercise((prev) =>
         prev.filter((toRemove) => toRemove !== exercise)
@@ -52,6 +53,7 @@ export default function EditProfile() {
     }
   };
 
+  // will have to get index of photo that user is trying to update
   const uploadImage = async (image) => {
     let blob = image.slice(0, image.size, "image/jpg");
     let newFile = new File([blob], "1.jpg", { type: "image/jpg" });
@@ -69,6 +71,7 @@ export default function EditProfile() {
     }
   };
 
+    // CR: user confirmation upon submit
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -133,7 +136,8 @@ export default function EditProfile() {
             </Button>
             {images.length > 0 && (
               <>
-                {Array.from(images).map((image) => {
+              {/* CR: User should be able to see already uploaded images */}
+                {Array.from(images).map((image) => { 
                   return <code key={image.name}>{image.name},</code>;
                 })}
               </>
@@ -233,6 +237,8 @@ export default function EditProfile() {
           </Grid>
           <Grid item xs={12}>
             <Button
+            // CR: explain attributes
+            // could store attrs in object
               disabled={
                 images.length === 0 || desiredExercise.length === 0 || !favGym
               }

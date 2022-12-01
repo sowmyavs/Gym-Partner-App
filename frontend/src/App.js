@@ -10,8 +10,10 @@ import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 
 function App() {
+  // CR: remove
   const [currUser, setCurrUser] = useState([]);
 
+  // CR: comments describing hex vals
   const theme = createTheme({
     components: {
       MuiLink: {

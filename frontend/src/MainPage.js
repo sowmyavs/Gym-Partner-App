@@ -15,6 +15,7 @@ import LogoutTab from "./LogoutTab.js";
 import { Navigate } from "react-router-dom";
 
 export default function MainPage() {
+  // CR: rename value to more clear var
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
