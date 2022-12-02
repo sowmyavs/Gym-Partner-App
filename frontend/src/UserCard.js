@@ -24,7 +24,7 @@ export default function UserCard({name, experience, gym, exercise, bio, images})
                 <img alt="profile pic" src={images[img]} style={{width: 340}}/>
             </div>
             <div style={{paddingLeft: 10, paddingRight: 10}}>
-                <ArrowCircleLeftOutlinedIcon sx={{}}role="button" onClick={reverseImgHandler}/>
+                <ArrowCircleLeftOutlinedIcon role="button" onClick={reverseImgHandler}/>
                 <ArrowCircleRightOutlinedIcon role="button" onClick={fwdImgHandler}/>
                 <Typography variant="h6" sx={{pl: 1}}>{name}</Typography>
                 <Chip size="small" label={"Experience: " + experience} sx={{mr: 1, mb: "3px"}}/>
