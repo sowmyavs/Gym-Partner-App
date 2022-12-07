@@ -19,9 +19,13 @@ export default function ImagePreview(props) {
     textAlign: "center",
   };
 
-  const deleteImage = () => {
-    // TODO implement with back end
-    console.log(props.image);
+  const deleteImage = async () => {
+    const imageIndex = props.image.charAt(props.image.length - 5);
+    const resp = await fetch(
+      `/image/${localStorage.getItem("id")}/${imageIndex}`,
+      { method: "DELETE" }
+    );   
+    props.setImages(props.imageArr.filter((img, idx) => idx !== props.index));
   };
 
   return (
