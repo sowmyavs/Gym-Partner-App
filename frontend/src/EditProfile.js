@@ -50,6 +50,7 @@ export default function EditProfile() {
     setBio(json.bio);
     setFavGym(json.favorite_gym);
     setImages(json.images);
+    // cr: fetch data for which checkboxes are checked
   }, []);
 
   /**
@@ -79,7 +80,7 @@ export default function EditProfile() {
         method: "POST",
         body: newFile,
       });
-      if (response.status == 201) {
+      if (response.status === 201) {
         console.log("Image uploaded");
       } else {
         console.log("Error uploading image");
