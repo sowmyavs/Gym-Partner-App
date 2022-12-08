@@ -97,7 +97,7 @@ export default function EditProfile() {
         method: "POST",
         body: newFile,
       });
-      if (response.status == 201) {
+      if (response.status === 201) {
         console.log("Image uploaded");
       } else {
         console.log("Error uploading image");

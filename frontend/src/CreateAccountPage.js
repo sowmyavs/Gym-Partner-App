@@ -140,7 +140,7 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
                 required
                 fullWidth
                 id="password"
-                label="password"
+                label="Password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
