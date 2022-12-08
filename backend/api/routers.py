@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 # Models import
-from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel
+from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel, LoginUpdateModel, PasswordUpdateModel
 
 # GCP Manager import
 from api.image_storage import ImageManager
@@ -85,6 +85,50 @@ def get_api_router(app):
     # update user preferences
     @router.put("/user/preferences/{id}", response_description="Update User")
     async def update_preferences(id: str, request: Request, user: PreferencesUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+    # update user preferences
+    @router.put("/user/Login/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: LoginUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+    # update user preferences
+    @router.put("/user/Password/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: PasswordUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
     
         user = {k: v for k, v in user.dict().items() if v is not None}
