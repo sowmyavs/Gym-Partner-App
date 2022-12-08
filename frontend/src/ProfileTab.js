@@ -37,7 +37,7 @@ export default function ProfileTab() {
         <Paper elevation={4} sx={{height: 470, width: 360, mb: 2}}/>
       }
       <Stack direction="row" spacing={10} sx={{m: "auto"}}>
-        <IconButton onClick={() => navigate("/survey")}><EditIcon fontSize="large"/></IconButton>
+        <IconButton onClick={() => navigate("/editProfile")}><EditIcon fontSize="large"/></IconButton>
         <IconButton><SettingsIcon fontSize="large"/></IconButton>
       </Stack>
     </Stack>

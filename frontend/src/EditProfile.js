@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormGroup,
   Grid,
@@ -16,12 +17,22 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ImagePreview from "./ImagePreview";
 
 export default function EditProfile() {
   const navigate = useNavigate();
+
+  // state to indicate image upload
+  const [uploading, setUploading] = useState(false);
+
+  // states for user object
+  const [bio, setBio] = useState("");
   const [desiredExercise, setDesiredExercise] = useState([]);
   const [images, setImages] = useState([]);
   const [favGym, setFavGym] = useState();
+  const [expLevel, setExpLevel] = useState(5);
+
+  // constants
   const gyms = ["The Nick", "The Shell", "Off Campus Gym"];
   const experienceLevels = [
     {
@@ -39,9 +50,23 @@ export default function EditProfile() {
   ];
 
   /**
-   * State manager for desiredExercise checkboxes.
+   * Fetch the user info on page load
+   */
+  useEffect(async () => {
+    const response = await fetch(`/user/${localStorage.getItem("id")}`);
+    const json = await response.json();
+    setBio(json.bio);
+    setFavGym(json.favorite_gym);
+    setImages(json.images);
+    setDesiredExercise(json.desired_exercise);
+    setExpLevel(json.experience_level);
+  }, []);
+
+  /**
+   * State manager for desiredExercise checkboxes; toggles preferences
    */
   const handleCheckbox = (event) => {
+    // accessing target properties to get exercise string label
     const exercise = event.target.labels[0].innerText;
     if (desiredExercise.includes(exercise)) {
       setDesiredExercise((prev) =>
@@ -52,47 +77,81 @@ export default function EditProfile() {
     }
   };
 
-  const uploadImage = async (image) => {
-    let blob = image.slice(0, image.size, "image/jpg");
-    let newFile = new File([blob], "1.jpg", { type: "image/jpg" });
-    let formData = new FormData();
-    formData.append("imgfile", newFile);
-    const response = await fetch(`/image/${localStorage.getItem("id")}`, {
-      method: "POST",
-      body: newFile,
-    });
-    if (response.status == 201) {
-      console.log("Image uploaded");
-    } else {
-      console.log("Error uploading image");
-      console.log(response);
+  /**
+   * For each new image submitted, this will post to the user object with the image,
+   * and will then re-fetch the user's images upon upload
+   *
+   * @param imageList list of new images when submiting to the form
+   */
+  const uploadImage = async (imageList) => {
+    // show loading status
+    setUploading(true);
+
+    // upload images
+    for (const image of Array.from(imageList)) {
+      let blob = image.slice(0, image.size, image.type);
+      let newFile = new File([blob], image.name, { type: image.type });
+      let formData = new FormData();
+      formData.append("imgfile", newFile);
+      const response = await fetch(`/image/${localStorage.getItem("id")}`, {
+        method: "POST",
+        body: newFile,
+      });
+      if (response.status == 201) {
+        console.log("Image uploaded");
+      } else {
+        console.log("Error uploading image");
+        console.log(response);
+      }
     }
+
+    // get and set new images
+    const response = await fetch(`/user/${localStorage.getItem("id")}`);
+    const json = await response.json();
+    setImages(json.images);
+
+    // hide loading icon
+    setUploading(false);
   };
 
+  /**
+   * Submits the form data and updates user object in db
+   *
+   * @param event event fired on submit press
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const bio = data.get("bio");
-    const experienceLevel = data.get("experience-level");
-    Array.from(images).forEach((image) => uploadImage(image));
+    const response = await fetch(
+      `/user/preferences/${localStorage.getItem("id")}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bio: bio,
+          experience_level: expLevel,
+          desired_exercise: desiredExercise,
+          favorite_gym: favGym,
+        }),
+      }
+    );
 
-    const response = await fetch(`/user/preferences/${localStorage.getItem("id")}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        bio: bio,
-        experience_level: experienceLevel,
-        desired_exercise: desiredExercise,
-        favorite_gym: favGym,
-      }),
-    });
-    console.log(response);
+    // log error if failed, otherwise navigate away from page upon succsefful completion
+    if (response.status != 201) {
+      console.log(response);
+    } else {
+      navigate("/");
+    }
   };
 
+  //
+  // Render:
+  //
   return (
     <Container maxWidth="xs">
+      {/* Form component */}
       <Box
         component="form"
         sx={{
@@ -104,44 +163,64 @@ export default function EditProfile() {
         }}
         onSubmit={handleSubmit}
       >
+        {/* Title */}
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid item xs={12} sx={{ display: "flex" }}>
+            {/* Back Button */}
             <IconButton
               onClick={() => navigate("/")}
               sx={{ alignSelf: "start" }}
             >
               <ArrowBackIcon></ArrowBackIcon>
             </IconButton>
+
+            {/* Title */}
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h5">Complete Your Profile</Typography>
             </Box>
           </Grid>
+
+          {/* Image Upload */}
           <Grid item xs={6}>
             <Button fullWidth variant="outlined" component="label">
               Add Images <AddPhotoAlternateIcon sx={{ ml: 2 }} />
               <input
                 name="images"
-                required
                 type="file"
                 hidden
                 multiple
-                accept=".png,.jpg,"
-                onChange={(e) => {
-                  setImages(e.target.files);
-                }}
+                accept=".png,.jpg,.gif"
+                onChange={(e) => uploadImage(e.target.files)}
               />
             </Button>
-            {images.length > 0 && (
-              <>
-                {Array.from(images).map((image) => {
-                  return <code key={image.name}>{image.name},</code>;
-                })}
-              </>
-            )}
           </Grid>
           <Grid item xs={6}>
             <p>1-6 Profile Photos Required (JPEG or PNG)</p>
           </Grid>
+
+          {/* Images Previews and Loading Icon*/}
+          {images.length > 0 && (
+            <>
+              <Grid container item xs={12}>
+                {Array.from(images).map((image, i) => {
+                  return (
+                    <ImagePreview
+                      key={image}
+                      image={image}
+                      index={i}
+                      setImages={setImages}
+                      imageArr={images}
+                    />
+                  );
+                })}
+                {uploading && (
+                  <CircularProgress style={{ marginTop: 20, marginLeft: 40 }} />
+                )}
+              </Grid>
+            </>
+          )}
+
+          {/* Bio Checkbox */}
           <Grid item xs={12}>
             <TextField
               multiline
@@ -151,21 +230,27 @@ export default function EditProfile() {
               name="bio"
               label="Bio"
               type="text"
+              value={bio}
               placeholder="Write about yourself... (max: 140 characters)"
+              onChange={(event) => setBio(event.target.value)}
             ></TextField>
           </Grid>
+
+          {/* Experience Level Slider */}
           <Grid item xs={12}>
             <h3>Experience Level:</h3>
             <Slider
-              name="experience-level"
-              defaultValue={5}
+              value={expLevel}
               step={1}
               marks={experienceLevels}
               min={0}
               max={10}
               track={false}
+              onChange={(event, newVal) => setExpLevel(newVal)} 
             />
           </Grid>
+
+          {/* Desired Exercise Checkboxes */}
           <Grid container item xs={12}>
             <Grid item xs={12}>
               <h3>Desired Exercise:</h3>
@@ -179,45 +264,63 @@ export default function EditProfile() {
                 justifyContent: "space-evenly",
               }}
             >
+              {/* Column 1 */}
               <FormGroup>
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={desiredExercise.includes("Cardio")} />
+                  }
                   label="Cardio"
                 />
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={desiredExercise.includes("Cycling")} />
+                  }
                   label="Cycling"
                 />
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox
+                      checked={desiredExercise.includes("Strength Training")}
+                    />
+                  }
                   label="Strength Training"
                 />
               </FormGroup>
+              {/* Column 1 */}
               <FormGroup>
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={desiredExercise.includes("Yoga")} />
+                  }
                   label="Yoga"
                 />
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={desiredExercise.includes("Crossfit")} />
+                  }
                   label="Crossfit"
                 />
                 <FormControlLabel
                   onChange={handleCheckbox}
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={desiredExercise.includes("Sports")} />
+                  }
                   label="Sports"
                 />
               </FormGroup>
             </Grid>
           </Grid>
+
+          {/* Preferred Gym Dropdown */}
           <Grid item xs={12}>
             <Autocomplete
-              value={favGym || null}
+              value={favGym || "The Nick"}
               onChange={(event, newValue) => {
                 setFavGym(newValue);
               }}
@@ -231,6 +334,8 @@ export default function EditProfile() {
               )}
             ></Autocomplete>
           </Grid>
+
+          {/* Submit Button */}
           <Grid item xs={12}>
             <Button
               disabled={
