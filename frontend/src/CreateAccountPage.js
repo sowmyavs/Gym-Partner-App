@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import crc from 'crc';
+import crc from "crc";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -52,6 +52,9 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
     async function createAccount() {
       await fetch("/user", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           id: id,
           name: firstName + " " + lastName,
@@ -59,13 +62,13 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
           password: password,
           bio: "140 char max",
           images: [],
-          preset_attributes: "ex: Types of exercise, experience level, etc",
-          favorite_gym: ["gym_name", "gym_address"],
+          experience_level: 0,
+          desired_exercise: [],
+          favorite_gym: "The Nick",
           liked_users: [],
           matched_users: [],
           blocked_users: [],
         }),
-        headers: { "content-type": "application/json" },
       });
       let response = await fetch("/user/" + id);
       let user = await response.json();
@@ -137,7 +140,7 @@ export default function CreateAccountPage({ signInSuccess, openLoginPage }) {
                 required
                 fullWidth
                 id="password"
-                label="password"
+                label="Password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
