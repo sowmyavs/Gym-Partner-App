@@ -86,3 +86,27 @@ class PreferencesUpdateModel(BaseModel):
                 "favorite_gym": "The Nick"
             }
         }
+
+class LoginUpdateModel(BaseModel):
+    name: str = Field(...)
+    email: str = Field(...)
+    password: str = Field(...)
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "email@gmail.com",
+                "password": "password"
+            }
+        }
+
+class PasswordUpdateModel(BaseModel):
+    password: str = Field(...)
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "password": "password"
+            }
+        }

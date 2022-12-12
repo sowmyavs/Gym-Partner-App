@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 # Models import
-from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel
+from api.models import UserModel, UserUpdateModel, PreferencesUpdateModel, LoginUpdateModel, PasswordUpdateModel
 
 # GCP Manager import
 from api.image_storage import ImageManager
@@ -64,7 +64,7 @@ def get_api_router(app):
     @router.put("/user/{id}", response_description="Update User")
     async def update_user(id: str, request: Request, user: UserUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
-    
+
         user = {k: v for k, v in user.dict().items() if v is not None}
 
         if len(user) >= 1:
@@ -85,6 +85,50 @@ def get_api_router(app):
     # update user preferences
     @router.put("/user/preferences/{id}", response_description="Update User")
     async def update_preferences(id: str, request: Request, user: PreferencesUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+    # update user preferences
+    @router.put("/user/Login/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: LoginUpdateModel = Body(...)):
+        db = request.app.mongodb["users"]
+    
+        user = {k: v for k, v in user.dict().items() if v is not None}
+
+        if len(user) >= 1:
+            update_result = await db.update_one({"_id": id}, {"$set": user})
+
+            if update_result.modified_count == 1:
+                if (updated_user := await db.find_one({"_id": id})) is not None:
+                    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                        content=updated_user)
+
+        if (existing_user := await db.find_one({"_id": id})) is not None:
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content=existing_user)
+
+        # Return an error if no user if found
+        raise HTTPException(status_code=404, detail=f"User {id} not found")
+
+    # update user preferences
+    @router.put("/user/Password/{id}", response_description="Update User")
+    async def update_preferences(id: str, request: Request, user: PasswordUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
     
         user = {k: v for k, v in user.dict().items() if v is not None}
@@ -116,49 +160,62 @@ def get_api_router(app):
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-     # add image to profile 
+     # add image to profile
     @router.post("/image/{id}", response_description="Upload image to user profile")
-    async def upload_image(id: str, request: Request, image_input = Body(...)):        
+    async def upload_image(id: str, request: Request, image_input=Body(...)):
         # write file to local dir
-        with open('profile_image.jpg','wb') as image:
+        with open('profile_image.jpg', 'wb') as image:
             image.write(image_input)
             image.close()
-        
+
         # Connect to DB, make sure the user exists, raise error if not
         db = request.app.mongodb["users"]
         if (user := await db.find_one({"_id": id})) is None:
             raise HTTPException(status_code=404, detail=f"User {id} not found")
-            
+
+        # calculate unique image id
+        ids = []
+        for element in user['images']:
+            index = element[-5]
+            ids.append(int(index))
+
+        imageId = len(ids)
+        for i in range(0, max(ids) + 1):
+            if i not in ids:
+                imageId = i
+                break        
+
         # store image into GCP
-        file_name = id + '-' + str(len(user['images']))
+        file_name = id + '-' + str(imageId)
         ImageManager.store_image_gcp(file_name)
-        
+
         # get the link of the photo in GCP
         image_url = ImageManager.get_link(file_name)
 
         # TODO: store image link into MongoDB (not storing correctly)
         update_result = await db.update_one({"_id": id}, {"$push": {"images": image_url}})
- 
+
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
     # delete image from profile
     @router.delete("/image/{id}/{index}", response_description="Delete image from user profile")
-    async def delete_image(id: str, request, Request, index: str):
+    async def delete_image(id: str, index: str, request: Request):
         db = request.app.mongodb["users"]
         # Find user, then the image that is to be deleted and delete it from MongoDB
         if (user := await db.find_one({"_id": id})) is None:
             raise HTTPException(status_code=404, detail=f"User {id} not found")
-        
+
         file_name = id + '-' + index
         image_to_delete_url = ImageManager.get_link(file_name)
+        print(file_name)
+        print(image_to_delete_url)
         delete_result = await db.update_one({"_id": id}, {"$pull": {"images": image_to_delete_url}})
 
-        
         # Find photo in GCP, delete it
 
         # re-organize photos in GCP
 
-        return " "
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
     # We return our router
     return router
