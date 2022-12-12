@@ -180,7 +180,10 @@ def get_api_router(app):
             ids.append(int(index))
 
         imageId = len(ids)
-        for i in range(0, max(ids) + 1):
+        nextId = 0
+        if ids:
+           nextId = max(ids) + 1 
+        for i in range(0, nextId):
             if i not in ids:
                 imageId = i
                 break        
