@@ -12,25 +12,29 @@ from api.image_storage import ImageManager
 # Config import
 from config import settings
 
+"""
+API class
 
-# Defining our API router
+@author Tyler Kehoe
+"""
 def get_api_router(app):
     # Create a FastAPI router
     router = APIRouter()
 
     # We define a root path for our API with metadata
+    #
+    # @return JSON response with result
     @router.get("/", response_description="API MetaData")
     async def api_metadata(request: Request):
         result = {
             "api": "API",
-            "author": "Nuno Bispo",
-            "website": "https://developer-service.io",
-            "email": "developer@developer-service.io",
-            "version": "1.0"
+            "author": "BigBuffBadgers",
         }
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
 
     # This path will return a list of tasks
+    #
+    # @return JSON response with result
     @router.get("/users", response_description="List Users")
     async def list_users(request: Request):
         users = []
@@ -40,6 +44,12 @@ def get_api_router(app):
         return JSONResponse(status_code=status.HTTP_200_OK, content=users)
 
     # This path allows to create a new user
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param user: the JSON object body being added
+    # @return JSON response with feedback on whether or not a new 
+    # user was created
     @router.post("/user", response_description="Add User")
     async def add_user(request: Request, user: UserModel = Body(...)):
         db = request.app.mongodb["users"]
@@ -51,6 +61,11 @@ def get_api_router(app):
                             content=created_user)
 
     # This path allows to get a user
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @return JSON response with user object
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.get("/user/{id}", response_description="Get User")
     async def get_user(id: str, request: Request):
         db = request.app.mongodb["users"]
@@ -61,6 +76,12 @@ def get_api_router(app):
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # This path allows to update a user
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param user: the JSON object body being updated
+    # @return JSON response giving feedback if the given user was updated
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.put("/user/{id}", response_description="Update User")
     async def update_user(id: str, request: Request, user: UserUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
@@ -83,6 +104,12 @@ def get_api_router(app):
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # update user preferences
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param user: the JSON object body being updated
+    # @return JSON response with result
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.put("/user/preferences/{id}", response_description="Update User")
     async def update_preferences(id: str, request: Request, user: PreferencesUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
@@ -105,6 +132,12 @@ def get_api_router(app):
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # update user preferences
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param user: the JSON object body being updated
+    # @return JSON response with result if a users preferences are updated
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.put("/user/Login/{id}", response_description="Update User")
     async def update_preferences(id: str, request: Request, user: LoginUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
@@ -126,9 +159,15 @@ def get_api_router(app):
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-    # update user preferences
+    # update user password
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param user: the JSON password body being updated
+    # @return JSON response with result of whether or not the password is updated
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.put("/user/Password/{id}", response_description="Update User")
-    async def update_preferences(id: str, request: Request, user: PasswordUpdateModel = Body(...)):
+    async def update_password(id: str, request: Request, user: PasswordUpdateModel = Body(...)):
         db = request.app.mongodb["users"]
     
         user = {k: v for k, v in user.dict().items() if v is not None}
@@ -149,6 +188,11 @@ def get_api_router(app):
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
     # This path allows to delete a user
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @return JSON response with result of whether or not a user was deleted
+    # @raise HTTPException: raised if user is not found in MongoDB
     @router.delete("/user/{id}", response_description="Delete User")
     async def delete_user(id: str, request: Request):
         db = request.app.mongodb["users"]
@@ -160,7 +204,12 @@ def get_api_router(app):
         # Return an error if no user if found
         raise HTTPException(status_code=404, detail=f"User {id} not found")
 
-     # add image to profile
+    # add image to profile
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @param image_input: the image being uploaded
+    # @return JSON response with result of whether or not an image was uploaded
     @router.post("/image/{id}", response_description="Upload image to user profile")
     async def upload_image(id: str, request: Request, image_input=Body(...)):
         # write file to local dir
@@ -198,6 +247,11 @@ def get_api_router(app):
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=[])
 
     # delete image from profile
+    # [DEPRECATED]
+    #
+    # @param id: the users id
+    # @param request: the current request from frontend
+    # @return JSON response with result of whether or not the photo was deleted or not
     @router.delete("/image/{id}/{index}", response_description="Delete image from user profile")
     async def delete_image(id: str, index: str, request: Request):
         db = request.app.mongodb["users"]
