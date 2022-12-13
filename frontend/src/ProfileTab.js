@@ -38,7 +38,7 @@ export default function ProfileTab() {
       }
       <Stack direction="row" spacing={10} sx={{m: "auto"}}>
         <IconButton onClick={() => navigate("/editProfile")}><EditIcon fontSize="large"/></IconButton>
-        <IconButton><SettingsIcon fontSize="large"/></IconButton>
+        <IconButton onClick={() => navigate("/settings")}><SettingsIcon fontSize="large"/></IconButton>
       </Stack>
     </Stack>
   );

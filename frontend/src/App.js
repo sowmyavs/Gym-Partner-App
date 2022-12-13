@@ -6,6 +6,7 @@ import CreateAccountPage from "./CreateAccountPage";
 import MainPage from "./MainPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import EditProfile from "./EditProfile";
+import Settings from "./Settings";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 
@@ -46,6 +47,7 @@ function App() {
             <Route path="/createAccount" element={<CreateAccountPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/editProfile" element={<EditProfile />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
