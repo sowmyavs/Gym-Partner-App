@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Stack, IconButton} from "@mui/material";
+import {Stack, IconButton, Paper} from "@mui/material";
 import UserCard from "./UserCard";
 import Box from '@mui/material/Box';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
@@ -87,6 +87,8 @@ export default function MatchTab() {
       <Box>
         <IconButton onClick={nextProfile}><ThumbDownAltOutlinedIcon fontSize="large" style={{color: "#c5050c"}}/></IconButton>
       </Box>
+      {potentialMatches === null &&
+      <Paper elevation={4} sx={{height: 500, width: 413, mb: 2}}/>}
       {potentialMatches != null &&
       <UserCard
         name={potentialMatches[currentProfile].name}
@@ -96,7 +98,7 @@ export default function MatchTab() {
         bio={potentialMatches[currentProfile].bio}
         images={potentialMatches[currentProfile].images}
         />
-      };
+      }
       <Box>
         <IconButton onClick={likeProfile}><ThumbUpAltOutlinedIcon fontSize="large" style={{color: "#c5050c"}}/></IconButton>
       </Box>

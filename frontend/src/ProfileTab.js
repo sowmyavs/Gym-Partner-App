@@ -34,7 +34,7 @@ export default function ProfileTab() {
         />
       }
       {userProfile == null &&
-        <Paper elevation={4} sx={{height: 470, width: 360, mb: 2}}/>
+        <Paper elevation={4} sx={{height: 500, width: 413, mb: 2}}/>
       }
       <Stack direction="row" spacing={10} sx={{m: "auto"}}>
         <IconButton onClick={() => navigate("/editProfile")}><EditIcon fontSize="large"/></IconButton>
