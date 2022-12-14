@@ -23,7 +23,7 @@ export default function UserCard({name, experience, gym, exercise, bio, images})
     return (
         <Paper elevation={4} sx={{height: 500, width: 413, mb: 2}}>
             <div style={{overflow: "hidden", height: 300, margin: 10, borderRadius: 10}}>
-                <img alt="profile pic" src={images[img]} style={{width: 340}}/>
+                <img alt="profile pic" src={images[img]} style={{width: 395, height: 300, objectFit: "cover"}}/>
             </div>
             <div style={{paddingLeft: 10, paddingRight: 10}}>
                 <ArrowCircleLeftOutlinedIcon role="button" onClick={reverseImgHandler}/>
@@ -33,7 +33,7 @@ export default function UserCard({name, experience, gym, exercise, bio, images})
                 <Chip size="small" label={gym} sx={{mr: 1, mb: "3px"}}/>
                 {(exercise).map(item => <Chip size="small" key={item} label={item} sx={{mr: 1, mb: "3px"}}/>)}
                 <br/>
-                <Typography variant="caption" sx={{pl: 2}}>{bio}</Typography>
+                <Typography variant="caption">{bio}</Typography>
             </div>
         </Paper>
     )
